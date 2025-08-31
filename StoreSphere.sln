@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B4295F04-9D28-4D04-8965-AEF0A89B90D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityAccess", "IdentityAccess", "{030DAC48-4AE6-41D5-9961-0374F6D00E21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreSphere.IdentityAccess.Api", "src\IdentityAccess\StoreSphere.IdentityAccess.Api\StoreSphere.IdentityAccess.Api.csproj", "{8F18C0B5-B59A-4E68-8F99-C809F4A29020}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreSphere.IdentityAccess.Application", "src\IdentityAccess\StoreSphere.IdentityAccess.Application\StoreSphere.IdentityAccess.Application.csproj", "{40BDC2A1-1212-4B67-A49F-61612A01AFCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreSphere.IdentityAccess.Domain", "src\IdentityAccess\StoreSphere.IdentityAccess.Domain\StoreSphere.IdentityAccess.Domain.csproj", "{57E35711-2307-4C27-8590-3DC70BA60686}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreSphere.IdentityAccess.Infrastructure", "src\IdentityAccess\StoreSphere.IdentityAccess.Infrastructure\StoreSphere.IdentityAccess.Infrastructure.csproj", "{DE0EBACF-84F8-4795-81ED-80E0935D248B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{A2EAB0BA-FEAD-44CD-B3BD-397605CF2693}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreShpere.SharedKernel", "src\shared\StoreShpere.SharedKernel\StoreShpere.SharedKernel.csproj", "{4C0C333C-35CE-47FC-A250-06FF15D8924F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F18C0B5-B59A-4E68-8F99-C809F4A29020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F18C0B5-B59A-4E68-8F99-C809F4A29020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F18C0B5-B59A-4E68-8F99-C809F4A29020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F18C0B5-B59A-4E68-8F99-C809F4A29020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40BDC2A1-1212-4B67-A49F-61612A01AFCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40BDC2A1-1212-4B67-A49F-61612A01AFCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40BDC2A1-1212-4B67-A49F-61612A01AFCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40BDC2A1-1212-4B67-A49F-61612A01AFCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E35711-2307-4C27-8590-3DC70BA60686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E35711-2307-4C27-8590-3DC70BA60686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E35711-2307-4C27-8590-3DC70BA60686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E35711-2307-4C27-8590-3DC70BA60686}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE0EBACF-84F8-4795-81ED-80E0935D248B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE0EBACF-84F8-4795-81ED-80E0935D248B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE0EBACF-84F8-4795-81ED-80E0935D248B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE0EBACF-84F8-4795-81ED-80E0935D248B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C0C333C-35CE-47FC-A250-06FF15D8924F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C0C333C-35CE-47FC-A250-06FF15D8924F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C0C333C-35CE-47FC-A250-06FF15D8924F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C0C333C-35CE-47FC-A250-06FF15D8924F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{030DAC48-4AE6-41D5-9961-0374F6D00E21} = {B4295F04-9D28-4D04-8965-AEF0A89B90D8}
+		{8F18C0B5-B59A-4E68-8F99-C809F4A29020} = {030DAC48-4AE6-41D5-9961-0374F6D00E21}
+		{40BDC2A1-1212-4B67-A49F-61612A01AFCF} = {030DAC48-4AE6-41D5-9961-0374F6D00E21}
+		{57E35711-2307-4C27-8590-3DC70BA60686} = {030DAC48-4AE6-41D5-9961-0374F6D00E21}
+		{DE0EBACF-84F8-4795-81ED-80E0935D248B} = {030DAC48-4AE6-41D5-9961-0374F6D00E21}
+		{A2EAB0BA-FEAD-44CD-B3BD-397605CF2693} = {B4295F04-9D28-4D04-8965-AEF0A89B90D8}
+		{4C0C333C-35CE-47FC-A250-06FF15D8924F} = {A2EAB0BA-FEAD-44CD-B3BD-397605CF2693}
+	EndGlobalSection
+EndGlobal

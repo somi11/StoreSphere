@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\StoreShpere.SharedKernel\StoreShpere.SharedKernel.csproj" />
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Domain\StoreSphere.IdentityAccess.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Commands\Roles\" />
+    <Folder Include="Features\Commands\Stores\" />
+    <Folder Include="Features\Commands\Tenants\" />
+    <Folder Include="Features\Queries\Roles\" />
+    <Folder Include="Features\Queries\Stores\" />
+    <Folder Include="Features\Queries\Tenants\" />
+    <Folder Include="Features\Queries\Users\" />
+    <Folder Include="Behaviors\" />
+  </ItemGroup>
+
+</Project>
