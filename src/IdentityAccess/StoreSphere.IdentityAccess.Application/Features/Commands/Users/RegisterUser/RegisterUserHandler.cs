@@ -31,7 +31,7 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.Registe
             Email.Create(request.Email),
             request.TenantId.HasValue ? new TenantId(request.TenantId.Value) : null
         );
-            _repository.Add(user);
+           await _repository.Add(user, request.Password);
 
             // Persist + dispatch domain events
             await _unitOfWork.SaveChangesAsync(cancellationToken);

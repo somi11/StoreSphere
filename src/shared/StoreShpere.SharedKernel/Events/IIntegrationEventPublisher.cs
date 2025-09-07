@@ -8,7 +8,7 @@ namespace StoreShpere.SharedKernel.Events
 {
     public interface IIntegrationEventPublisher
     {
-        Task PublishAsync(object integrationEvent, CancellationToken ct = default);
+       // Task PublishAsync(object integrationEvent, CancellationToken ct = default);
         Task PublishAsync<TEvent>(TEvent integrationEvent, CancellationToken ct = default)
             where TEvent : class;
     }

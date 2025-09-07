@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\StoreShpere.SharedKernel\StoreShpere.SharedKernel.csproj" />
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Application\StoreSphere.IdentityAccess.Application.csproj" />
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Domain\StoreSphere.IdentityAccess.Domain.csproj" />
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Infrastructure\StoreSphere.IdentityAccess.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

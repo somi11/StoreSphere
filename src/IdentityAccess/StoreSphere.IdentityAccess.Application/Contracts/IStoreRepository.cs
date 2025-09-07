@@ -12,7 +12,13 @@ namespace StoreSphere.IdentityAccess.Application.Contracts
     {
         Task AddAsync(Store store, CancellationToken ct = default);
         Task<Store?> GetByIdAsync(StoreId id, CancellationToken ct = default);
+
+        
         Task<IEnumerable<Store>> ListByTenantIdAsync(TenantId tenantId, CancellationToken ct = default);
         Task UpdateAsync(Store store, CancellationToken ct = default);
+
+
+        // Added for user assignments
+        Task<IEnumerable<Store>> GetByUserIdAsync(UserId userId, CancellationToken ct = default);
     }
 }

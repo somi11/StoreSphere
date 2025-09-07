@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.UpdateUser
 {
-    public record UpdateUserCommand(Guid UserId, string? Email, string? UserType, bool? ActivateUser) 
+    public record UpdateUserCommand(Guid UserId, string? Email, string? password, string? UserType, bool? ActivateUser) 
         : IRequest<Unit>;
 }
 

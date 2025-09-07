@@ -2,6 +2,7 @@
 using StoreSphere.IdentityAccess.Domain.Entities;
 using StoreSphere.IdentityAccess.Domain.Events.Store;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.Identifiers;
+using StoreSphere.IdentityAccess.Domain.ValueObjects.RoleScope;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.StoreStatus;
 using System;
 using System.Collections.Generic;
@@ -78,20 +79,21 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
 
         // --- User assignments ---
 
-        public void AssignUser(UserId userId, RoleId roleId)
+        public void AssignUser(UserId userId, Role role)
         {
-            if (_assignments.Any(a => a.UserId == userId && a.RoleId == roleId))
-                return; // Already assigned, no duplicates
+            if (role.Scope != RoleScope.Store)
+                throw new InvalidOperationException("Only store roles can be assigned in a store context.");
+
+            if (_assignments.Any(a => a.UserId == userId && a.RoleId == role.Id))
+                return;
 
             var assignment = new StoreUserAssignment(
-                new StoreUserAssignmentId(Guid.NewGuid()), Id, userId, roleId
+                new StoreUserAssignmentId(Guid.NewGuid()), Id, userId, role.Id, role.Scope 
             );
 
             _assignments.Add(assignment);
-
-            AddDomainEvent(new UserAssignedToStore(Id, userId, roleId));
+            AddDomainEvent(new UserAssignedToStore(Id, userId, role.Id));
         }
-
         public void RemoveUser(UserId userId, RoleId roleId)
         {
             var assignment = _assignments
@@ -103,6 +105,7 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
                 AddDomainEvent(new UserRemovedFromStore(Id, userId, roleId));
             }
         }
+
     }
 
 }

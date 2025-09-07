@@ -17,4 +17,13 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Authentication\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Application\StoreSphere.IdentityAccess.Application.csproj" />
+    <ProjectReference Include="..\StoreSphere.IdentityAccess.Domain\StoreSphere.IdentityAccess.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

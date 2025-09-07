@@ -1,5 +1,4 @@
-﻿using StoreSphere.IdentityAccess.Domain.Aggregates;
-using StoreSphere.IdentityAccess.Domain.common;
+﻿using StoreSphere.IdentityAccess.Domain.common;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.Identifiers;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.RoleScope;
 using System;
@@ -10,22 +9,20 @@ using System.Threading.Tasks;
 
 namespace StoreSphere.IdentityAccess.Domain.Entities
 {
-    public class StoreUserAssignment : Entity<StoreUserAssignmentId>
+    public class UserRoleAssignment : Entity<UserRoleAssignmentId>
     {
-        public StoreId StoreId { get; private set; }
         public UserId UserId { get; private set; }
         public RoleId RoleId { get; private set; }
         public DateTime AssignedAt { get; private set; }
 
-        private StoreUserAssignment() { } // EF Core
+        private UserRoleAssignment() { } // EF Core
 
-        public StoreUserAssignment(StoreUserAssignmentId id, StoreId storeId, UserId userId, RoleId roleId, RoleScope scope)
+        public UserRoleAssignment(UserRoleAssignmentId id, UserId userId, RoleId roleId, RoleScope scope)
         {
-            if (scope != RoleScope.Store)
-                throw new InvalidOperationException("Only store roles can be assigned within a store.");
+            if (scope != RoleScope.Global)
+                throw new InvalidOperationException("Only global roles can be assigned directly to a user.");
 
             Id = id;
-            StoreId = storeId;
             UserId = userId;
             RoleId = roleId;
             AssignedAt = DateTime.UtcNow;

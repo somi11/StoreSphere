@@ -12,12 +12,12 @@ namespace StoreSphere.IdentityAccess.Application.Contracts
     public interface IUserRepository
     {
         // Aggregate persistence
-        Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default);
-        void Add(User user);
-        void Update(User user);       // Just mark the aggregate as modified
-        void Remove(User user);       // Optional: soft delete
+        Task Add(User user , string password);
+        Task Update(User user ,string? password);   
+        Task Remove(User user);       // Optional: soft delete
 
         // Query methods for application / read layer
+        Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default);
         Task<UserDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<List<UserDto>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
         Task<List<UserDto>> GetByRoleAsync(string roleName, CancellationToken cancellationToken = default);

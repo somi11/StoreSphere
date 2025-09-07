@@ -20,11 +20,11 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.UpdateU
 
         public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            // 1️⃣ Get the aggregate
+            // 1️ Get the aggregate
             var user = await _repository.GetByIdAsync(new UserId(request.UserId), cancellationToken)
                        ?? throw new Exception("User not found");
 
-            // 2️⃣ Apply behavior methods (business rules + domain events)
+            // 2️ Apply behavior methods (business rules + domain events)
             if (!string.IsNullOrEmpty(request.Email))
                 user.ChangeEmail(Email.Create(request.Email));
 
@@ -42,8 +42,15 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.UpdateU
                     user.Deactivate();
             }
 
-            // 3️⃣ Persist changes
-            _repository.Update(user);
+            if (!string.IsNullOrEmpty(request.password))
+            {
+             await _repository.Update(user , request.password);
+            } else
+            {
+               await _repository.Update(user , string.Empty);
+            }
+            // 3️ Persist changes
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

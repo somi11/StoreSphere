@@ -1,7 +1,9 @@
 ﻿using StoreSphere.IdentityAccess.Domain.common;
+using StoreSphere.IdentityAccess.Domain.Entities;
 using StoreSphere.IdentityAccess.Domain.Events.User;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.Accounts;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.Identifiers;
+using StoreSphere.IdentityAccess.Domain.ValueObjects.RoleScope;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.UserType;
 using System.Collections.ObjectModel;
 
@@ -10,9 +12,12 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
 {
     public class User : AggregateRoot<UserId>
     {
-        private readonly List<Role> _roles = new();
-        public ReadOnlyCollection<Role> Roles => _roles.AsReadOnly();
+        //private readonly List<Role> _roles = new();
+        //public ReadOnlyCollection<Role> Roles => _roles.AsReadOnly();
 
+        private readonly List<UserRoleAssignment> _roleAssignments = new();
+        public ReadOnlyCollection<UserRoleAssignment> RoleAssignments => _roleAssignments.AsReadOnly();
+        public string? IdentityId { get; set; }
         public TenantId? TenantId { get; private set; }   // only for Merchant users
         public Email Email { get; private set; }
         public bool IsActive { get; private set; }
@@ -35,7 +40,7 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
             TenantId = tenantId;
             IsActive = true;
 
-            AddDomainEvent(new UserRegistered(Id, UserType, Email, TenantId));
+            AddDomainEvent(new UserRegistered(Id, UserType, Email, TenantId , IdentityId));
         }
 
         public void Activate()
@@ -58,23 +63,34 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
 
         public void AddRole(Role role)
         {
-            if (!_roles.Any(r => r.Id == role.Id))
+            if (role.Scope != RoleScope.Global)
+                throw new InvalidOperationException("Only global roles can be assigned directly to a user.");
+
+            if (!_roleAssignments.Any(a => a.RoleId == role.Id))
             {
-                _roles.Add(role);
+                var assignment = new UserRoleAssignment(
+                    UserRoleAssignmentId.New(), // Assuming you have a factory/static method for new IDs
+                    Id,
+                    role.Id,
+                    role.Scope
+                );
+                _roleAssignments.Add(assignment);
                 AddDomainEvent(new RoleAssignedToUser(Id, role.Id));
             }
         }
 
         public void RemoveRole(Role role)
         {
-            var existingRole = _roles.FirstOrDefault(r => r.Id == role.Id);
-            if (existingRole != null)
+            if (role.Scope != RoleScope.Global)
+                throw new InvalidOperationException("Only global roles can be removed directly from a user.");
+
+            var assignment = _roleAssignments.FirstOrDefault(a => a.RoleId == role.Id);
+            if (assignment != null)
             {
-                _roles.Remove(existingRole);
+                _roleAssignments.Remove(assignment);
                 AddDomainEvent(new RoleRemovedFromUser(Id, role.Id));
             }
         }
-
         public void ChangeEmail(Email newEmail)
         {
             if (newEmail != Email)
