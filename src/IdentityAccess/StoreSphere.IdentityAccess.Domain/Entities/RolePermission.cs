@@ -10,11 +10,12 @@ namespace StoreSphere.IdentityAccess.Domain.Entities
 {
     public class RolePermission
     {
+
         public RoleId RoleId { get; set; }
         public PermissionId PermissionId { get; set; }
 
-        // Optional navigation properties for EF Core convenience
-       public Role Role { get; set; }
-       public Permission Permission { get; set; }
+        // Navigation
+        public Role Role { get; set; }
+        public Permission Permission { get; set; }
     }
 }

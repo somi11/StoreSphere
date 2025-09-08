@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using StoreSphere.IdentityAccess.Application.Contracts;
+using StoreSphere.IdentityAccess.Infrastructure.Authentication;
 using StoreSphere.IdentityAccess.Infrastructure.Common;
 using StoreSphere.IdentityAccess.Infrastructure.Persistence;
 using System;
@@ -14,6 +15,9 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Extensions
     {
         public static IServiceCollection AddIdentityAccessInfrastructure(this IServiceCollection services)
         {
+
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IIdentityUserService, IdentityUserService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();

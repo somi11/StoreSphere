@@ -16,8 +16,7 @@ namespace StoreSphere.IdentityAccess.Domain.Aggregates
         //public ReadOnlyCollection<Role> Roles => _roles.AsReadOnly();
 
         private readonly List<UserRoleAssignment> _roleAssignments = new();
-        public ReadOnlyCollection<UserRoleAssignment> RoleAssignments => _roleAssignments.AsReadOnly();
-        public string? IdentityId { get; set; }
+        public IReadOnlyCollection<UserRoleAssignment> RoleAssignments => _roleAssignments.AsReadOnly(); public string? IdentityId { get; set; }
         public TenantId? TenantId { get; private set; }   // only for Merchant users
         public Email Email { get; private set; }
         public bool IsActive { get; private set; }

@@ -14,22 +14,22 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.RemoveU
     public class RemoveUserHandler : IRequestHandler<RemoveUserCommand, Unit>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ITenantRepository _tenantRepository;
-        private readonly IStoreRepository _storeRepository;
+       // private readonly ITenantRepository _tenantRepository;
+       // private readonly IStoreRepository _storeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
         public RemoveUserHandler(
             IUserRepository userRepository,
-            ITenantRepository tenantRepository,
-            IStoreRepository storeRepository,
+           // ITenantRepository tenantRepository,
+         //   IStoreRepository storeRepository,
             IUnitOfWork unitOfWork,
             IIntegrationEventPublisher publisher
             )
         {
             _userRepository = userRepository;
-            _tenantRepository = tenantRepository;
-            _storeRepository = storeRepository;
+           // _tenantRepository = tenantRepository;
+           // _storeRepository = storeRepository;
             _unitOfWork = unitOfWork;
             _integrationEventPublisher = publisher;
         }
@@ -42,22 +42,22 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.RemoveU
                 throw new KeyNotFoundException("User not found.");
 
             // Remove user from tenant
-            if (user.TenantId != null)
-            {
-                var tenant = await _tenantRepository.GetByIdAsync(user.TenantId, cancellationToken);
-                tenant?.RemoveUser(user.Id);
-            }
+            //if (user.TenantId != null)
+            //{
+            //    var tenant = await _tenantRepository.GetByIdAsync(user.TenantId, cancellationToken);
+            //    tenant?.RemoveUser(user.Id);
+            //}
 
-            // Remove user from all stores
-            var stores = await _storeRepository.GetByUserIdAsync(user.Id, cancellationToken);
-            foreach (var store in stores)
-            {
-                var assignments = store.Assignments.Where(a => a.UserId == user.Id).ToList();
-                foreach (var assignment in assignments)
-                {
-                    store.RemoveUser(user.Id, assignment.RoleId);
-                }
-            }
+            //// Remove user from all stores
+            //var stores = await _storeRepository.GetByUserIdAsync(user.Id, cancellationToken);
+            //foreach (var store in stores)
+            //{
+            //    var assignments = store.Assignments.Where(a => a.UserId == user.Id).ToList();
+            //    foreach (var assignment in assignments)
+            //    {
+            //        store.RemoveUser(user.Id, assignment.RoleId);
+            //    }
+            //}
             // deactivate user
             if (user.IsActive)
             {

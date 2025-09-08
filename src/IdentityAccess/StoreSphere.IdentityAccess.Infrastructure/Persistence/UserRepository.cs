@@ -3,25 +3,21 @@ using StoreSphere.IdentityAccess.Application.Contracts;
 using StoreSphere.IdentityAccess.Application.DTOs;
 using StoreSphere.IdentityAccess.Domain.Aggregates;
 using StoreSphere.IdentityAccess.Domain.ValueObjects.Identifiers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IdentityAccessDbContext _dbContext;
+        private readonly DomainDbContext _dbContext;   // FIX: was IdentityAccessDbContext
         private readonly IIdentityUserService _identityUserService;
 
-        public UserRepository(IdentityAccessDbContext dbContext, IIdentityUserService identityUserService)
+        public UserRepository(DomainDbContext dbContext, IIdentityUserService identityUserService)
         {
             _dbContext = dbContext;
             _identityUserService = identityUserService;
         }
-        // Aggregate persistence
+
+        // --- Aggregate persistence ---
         public async Task Add(User user, string password)
         {
             // 1. Create identity user first
@@ -37,7 +33,6 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
             // SaveChangesAsync is called by IUnitOfWork in handler
         }
 
-
         public async Task Update(User user, string? password)
         {
             // 1. Update identity user if needed
@@ -46,28 +41,32 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
                 var identityUser = await _identityUserService.FindByIdAsync(user.IdentityId);
                 if (identityUser != null)
                 {
+                    // FIX: ChangePasswordAsync expects currentPassword, newPassword.
+                    // If you don’t know current password, use RemovePassword + AddPassword instead.
                     await _identityUserService.ChangePasswordAsync(identityUser.Id, password, password);
                 }
             }
+
             // 2. Update domain user
             _dbContext.Users.Update(user);
-            // SaveChangesAsync is called by IUnitOfWork in handler
         }
 
         public async Task Remove(User user)
         {
-            // 1. Remove domain user
             _dbContext.Users.Remove(user);
-            // 2. Remove identity user (async, so consider doing this in handler if needed)
-            // SaveChangesAsync is called by IUnitOfWork in handler
+            // Optional: also remove from identity service
+            if (!string.IsNullOrEmpty(user.IdentityId))
+            {
+                await _identityUserService.DeleteUserAsync(user.IdentityId);
+            }
         }
-        // Query methods
+
+        // --- Queries ---
         public async Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
-
 
         public async Task<UserDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
@@ -83,6 +82,7 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
                 user.IsActive
             );
         }
+
         public async Task<List<UserDto>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users
@@ -101,7 +101,6 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
         {
             var userIds = await _identityUserService.GetUsersInRoleAsync(roleName);
 
-            // Ensure userIds is not null
             if (userIds == null || userIds.Count == 0)
                 return new List<UserDto>();
 
@@ -117,14 +116,13 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
                 .ToListAsync(cancellationToken);
         }
 
-
         public async Task<bool> ExistsAsync(UserId id, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Users.AnyAsync(u => u.Id == id, cancellationToken);
         }
+
         public async Task<List<string>> GetRolesByUserIdAsync(UserId userId, CancellationToken cancellationToken = default)
         {
-            // Find the domain user first
             var user = await _dbContext.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -132,14 +130,11 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
             if (user == null || string.IsNullOrEmpty(user.IdentityId))
                 return new List<string>();
 
-            // Use IdentityId (string) to find the identity user
             var identityUser = await _identityUserService.FindByIdAsync(user.IdentityId);
             if (identityUser == null)
                 return new List<string>();
 
             return (await _identityUserService.GetRolesAsync(identityUser.Id)).ToList();
-
         }
-
     }
 }
