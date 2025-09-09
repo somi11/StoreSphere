@@ -6,19 +6,18 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Authentication
 {
     public class IdentityUserService : IIdentityUserService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly AppIdentityDbContext _identityDbContext;
-        private readonly DomainDbContext _domainDbContext; // optional: bridge domain + identity
+        private readonly DomainDbContext _domainDbContext;
 
         public IdentityUserService(
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager,
-            SignInManager<ApplicationUser> signInManager,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            SignInManager<IdentityUser> signInManager,
             AppIdentityDbContext identityDbContext,
-            DomainDbContext domainDbContext // optional
-        )
+            DomainDbContext domainDbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -27,33 +26,33 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Authentication
             _domainDbContext = domainDbContext;
         }
 
-        // ---------------- Helpers ----------------
-        private static IdentityUserDto ToDto(ApplicationUser user) =>
+        private static IdentityUserDto ToDto(IdentityUser user) =>
             new IdentityUserDto(user.Id, user.Email!);
 
         private static SignInResultDto ToDto(SignInResult result) =>
             new SignInResultDto(result.Succeeded, result.IsLockedOut, result.RequiresTwoFactor);
 
         // ---------------- User Management ----------------
-        public async Task<IdentityUserDto?> CreateUserAsync(string email, string password)
+        public async Task<IdentityUserDto?> CreateUserAsync(string email, string password,
+            Dictionary<string, string>? claims = null)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
                 return null;
 
-            var user = new ApplicationUser { UserName = email, Email = email };
+            var user = new IdentityUser { UserName = email, Email = email };
             var result = await _userManager.CreateAsync(user, password);
 
-            if (result.Succeeded)
-            {
-                // OPTIONAL: sync with domain aggregate
-                // var domainUser = new User(new UserId(Guid.NewGuid()), UserType.Customer, Email.Create(email));
-                // _domainDbContext.Users.Add(domainUser);
-                // await _domainDbContext.SaveChangesAsync();
+            if (!result.Succeeded) return null;
 
-                return ToDto(user);
+            if (claims != null && claims.Any())
+            {
+                foreach (var kvp in claims)
+                {
+                    await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(kvp.Key, kvp.Value));
+                }
             }
 
-            return null;
+            return ToDto(user);
         }
 
         public async Task<bool> DeleteUserAsync(string userId)
@@ -95,11 +94,21 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Authentication
             return result.Succeeded;
         }
 
+        public async Task<bool> ResetPasswordAsync(string userId, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return false;
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            return result.Succeeded;
+        }
+
         // ---------------- Role Management ----------------
         public async Task<bool> CreateRoleAsync(string roleName)
         {
             if (await _roleManager.RoleExistsAsync(roleName)) return true;
-            var result = await _roleManager.CreateAsync(new ApplicationRole { Name = roleName });
+            var result = await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
             return result.Succeeded;
         }
 
@@ -157,6 +166,29 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Authentication
         {
             var user = await _userManager.FindByIdAsync(userId);
             return user != null && await _userManager.IsLockedOutAsync(user);
+        }
+
+        public async Task<bool> UpdateClaimsAsync(string userId, Dictionary<string, string> claims)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return false;
+
+            var existingClaims = await _userManager.GetClaimsAsync(user);
+
+            foreach (var kvp in claims)
+            {
+                var oldClaims = existingClaims.Where(c => c.Type == kvp.Key).ToList();
+                if (oldClaims.Any())
+                {
+                    var removeResult = await _userManager.RemoveClaimsAsync(user, oldClaims);
+                    if (!removeResult.Succeeded) return false;
+                }
+
+                var addResult = await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(kvp.Key, kvp.Value));
+                if (!addResult.Succeeded) return false;
+            }
+
+            return true;
         }
     }
 }

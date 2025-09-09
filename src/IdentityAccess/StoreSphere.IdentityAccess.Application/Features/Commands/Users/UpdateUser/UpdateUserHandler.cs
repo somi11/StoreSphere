@@ -7,7 +7,7 @@ using StoreSphere.IdentityAccess.Domain.ValueObjects.UserType;
 
 namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.UpdateUser
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand , Unit>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
     {
         private readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
@@ -20,37 +20,28 @@ namespace StoreSphere.IdentityAccess.Application.Features.Commands.Users.UpdateU
 
         public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            // 1️ Get the aggregate
+            // 1. Load aggregate
             var user = await _repository.GetByIdAsync(new UserId(request.UserId), cancellationToken)
                        ?? throw new Exception("User not found");
 
-            // 2️ Apply behavior methods (business rules + domain events)
+            // 2. Domain-driven changes
             if (!string.IsNullOrEmpty(request.Email))
                 user.ChangeEmail(Email.Create(request.Email));
 
             if (!string.IsNullOrEmpty(request.UserType) &&
                 Enum.TryParse<UserType>(request.UserType, out var newType))
-            {
-                user.ChangeUserType(newType); // ensure you added this method in User aggregate
-            }
+                user.ChangeUserType(newType);
 
             if (request.ActivateUser.HasValue)
             {
-                if (request.ActivateUser.Value)
-                    user.Activate();
-                else
-                    user.Deactivate();
+                if (request.ActivateUser.Value) user.Activate();
+                else user.Deactivate();
             }
 
-            if (!string.IsNullOrEmpty(request.password))
-            {
-             await _repository.Update(user , request.password);
-            } else
-            {
-               await _repository.Update(user , string.Empty);
-            }
-            // 3️ Persist changes
+            // 3. Persist in both Domain + Identity
+            await _repository.Update(user, request.CurrentPassword, request.NewPassword);
 
+            // 4. Save domain changes
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

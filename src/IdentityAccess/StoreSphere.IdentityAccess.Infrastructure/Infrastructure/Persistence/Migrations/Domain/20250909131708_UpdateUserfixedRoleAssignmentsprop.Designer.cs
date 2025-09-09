@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StoreSphere.IdentityAccess.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using StoreSphere.IdentityAccess.Infrastructure.Persistence;
 namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.Migrations.Domain
 {
     [DbContext(typeof(DomainDbContext))]
-    partial class DomainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909131708_UpdateUserfixedRoleAssignmentsprop")]
+    partial class UpdateUserfixedRoleAssignmentsprop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

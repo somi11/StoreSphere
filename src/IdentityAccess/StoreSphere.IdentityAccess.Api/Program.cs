@@ -7,6 +7,7 @@ using StoreSphere.IdentityAccess.Infrastructure.Extensions;
 using StoreSphere.IdentityAccess.Application;
 using StoreShpere.SharedKernel.Extensions;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,7 @@ builder.Services.AddDbContext<DomainDbContext>(options =>
 // Identity (ASP.NET Core Identity + EF store)
 // --------------------------------------------------------------------
 builder.Services
-    .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    .AddIdentity<IdentityUser, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 6;
         options.Password.RequireNonAlphanumeric = false;
@@ -75,8 +76,36 @@ builder.Services.AddApplicationServices();
 // Controllers, Swagger, MediatR
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // JWT Bearer setup
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
+});
 var app = builder.Build();
 
 // --------------------------------------------------------------------

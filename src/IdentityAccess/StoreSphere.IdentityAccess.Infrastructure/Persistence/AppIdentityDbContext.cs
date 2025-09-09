@@ -4,18 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
 {
-    public class ApplicationUser : IdentityUser
-    {
-        // Extra columns for Identity if needed
-    }
-
-    public class ApplicationRole : IdentityRole
-    {
-        // Extra columns if needed
-    }
-
     public class AppIdentityDbContext
-        : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+        : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options)
             : base(options) { }
@@ -24,31 +14,34 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
 
-            // Set schema for all Identity tables
+            // Use custom schema
             builder.HasDefaultSchema("identityaccess");
 
-            // Example: override table names if you want
-            builder.Entity<ApplicationUser>(b =>
+            // Rename all Identity tables (optional)
+            builder.Entity<IdentityUser>(b =>
             {
-                b.ToTable("AspNetUsers", "identityaccess");
+                b.ToTable("IdentityUsers", "identityaccess");
             });
 
-            builder.Entity<ApplicationRole>(b =>
+            builder.Entity<IdentityRole>(b =>
             {
-                b.ToTable("AspNetRoles", "identityaccess");
+                b.ToTable("IdentityRoles", "identityaccess");
             });
 
-            // Do the same for Claims, Logins, Tokens, etc.
             builder.Entity<IdentityUserClaim<string>>()
-                .ToTable("AspNetUserClaims", "identityaccess");
+                .ToTable("IdentityUserClaims", "identityaccess");
+
             builder.Entity<IdentityUserRole<string>>()
-                .ToTable("AspNetUserRoles", "identityaccess");
+                .ToTable("IdentityUserRoles", "identityaccess");
+
             builder.Entity<IdentityUserLogin<string>>()
-                .ToTable("AspNetUserLogins", "identityaccess");
+                .ToTable("IdentityUserLogins", "identityaccess");
+
             builder.Entity<IdentityRoleClaim<string>>()
-                .ToTable("AspNetRoleClaims", "identityaccess");
+                .ToTable("IdentityRoleClaims", "identityaccess");
+
             builder.Entity<IdentityUserToken<string>>()
-                .ToTable("AspNetUserTokens", "identityaccess");
+                .ToTable("IdentityUserTokens", "identityaccess");
         }
     }
 }

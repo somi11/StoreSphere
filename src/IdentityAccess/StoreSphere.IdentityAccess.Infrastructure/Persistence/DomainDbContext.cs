@@ -53,15 +53,17 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
 
                 entity.Property(u => u.IsActive);
 
-                // Map only the private backing field
-                entity.HasMany<UserRoleAssignment>("_roleAssignments")
+                // Navigation with backing field
+                entity.HasMany(u => u.RoleAssignments)   // use property here
                       .WithOne()
                       .HasForeignKey("UserId")
                       .IsRequired()
                       .OnDelete(DeleteBehavior.Cascade);
 
-                // Ignore the public read-only property
-                entity.Ignore(u => u.RoleAssignments);
+                // Tell EF to use the private field for persistence
+                entity.Metadata
+                      .FindNavigation(nameof(User.RoleAssignments))!
+                      .SetPropertyAccessMode(PropertyAccessMode.Field);
             });
             // ---------- Tenant ----------
             modelBuilder.Entity<Tenant>(entity =>

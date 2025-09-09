@@ -15,12 +15,12 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Authentication
     /// </summary>
     public class JwtTokenService : IJwtTokenService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly DomainDbContext _domainDbContext;
         private readonly JwtSettings _jwtSettings;
 
         public JwtTokenService(
-            UserManager<ApplicationUser> userManager,
+            UserManager<IdentityUser> userManager,
             DomainDbContext domainDbContext,
             IOptions<JwtSettings> jwtOptions)
         {

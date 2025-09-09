@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.Migrations.IdentityAccess
 {
     /// <inheritdoc />
-    public partial class InitialIdentityMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,7 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 name: "identityaccess");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "IdentityRoles",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -26,11 +26,11 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_IdentityRoles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "IdentityUsers",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -52,11 +52,11 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_IdentityUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "IdentityRoleClaims",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -68,18 +68,18 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.PrimaryKey("PK_IdentityRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        name: "FK_IdentityRoleClaims_IdentityRoles_RoleId",
                         column: x => x.RoleId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetRoles",
+                        principalTable: "IdentityRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "IdentityUserClaims",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -91,18 +91,18 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_IdentityUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_IdentityUserClaims_IdentityUsers_UserId",
                         column: x => x.UserId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetUsers",
+                        principalTable: "IdentityUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
+                name: "IdentityUserLogins",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -113,18 +113,18 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_IdentityUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_IdentityUserLogins_IdentityUsers_UserId",
                         column: x => x.UserId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetUsers",
+                        principalTable: "IdentityUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "IdentityUserRoles",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -133,25 +133,25 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_IdentityUserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_IdentityUserRoles_IdentityRoles_RoleId",
                         column: x => x.RoleId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetRoles",
+                        principalTable: "IdentityRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        name: "FK_IdentityUserRoles_IdentityUsers_UserId",
                         column: x => x.UserId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetUsers",
+                        principalTable: "IdentityUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
+                name: "IdentityUserTokens",
                 schema: "identityaccess",
                 columns: table => new
                 {
@@ -162,58 +162,58 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_IdentityUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_IdentityUserTokens_IdentityUsers_UserId",
                         column: x => x.UserId,
                         principalSchema: "identityaccess",
-                        principalTable: "AspNetUsers",
+                        principalTable: "IdentityUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
+                name: "IX_IdentityRoleClaims_RoleId",
                 schema: "identityaccess",
-                table: "AspNetRoleClaims",
+                table: "IdentityRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "identityaccess",
-                table: "AspNetRoles",
+                table: "IdentityRoles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
+                name: "IX_IdentityUserClaims_UserId",
                 schema: "identityaccess",
-                table: "AspNetUserClaims",
+                table: "IdentityUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
+                name: "IX_IdentityUserLogins_UserId",
                 schema: "identityaccess",
-                table: "AspNetUserLogins",
+                table: "IdentityUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
+                name: "IX_IdentityUserRoles_RoleId",
                 schema: "identityaccess",
-                table: "AspNetUserRoles",
+                table: "IdentityUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "identityaccess",
-                table: "AspNetUsers",
+                table: "IdentityUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "identityaccess",
-                table: "AspNetUsers",
+                table: "IdentityUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
@@ -223,31 +223,31 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Infrastructure.Persistence.M
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims",
+                name: "IdentityRoleClaims",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims",
+                name: "IdentityUserClaims",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins",
+                name: "IdentityUserLogins",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles",
+                name: "IdentityUserRoles",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens",
+                name: "IdentityUserTokens",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles",
+                name: "IdentityRoles",
                 schema: "identityaccess");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers",
+                name: "IdentityUsers",
                 schema: "identityaccess");
         }
     }

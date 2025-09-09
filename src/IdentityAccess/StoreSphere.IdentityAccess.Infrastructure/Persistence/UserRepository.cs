@@ -28,29 +28,52 @@ namespace StoreSphere.IdentityAccess.Infrastructure.Persistence
             // 2. Map identity info to domain user
             user.IdentityId = identityUser.Id;
 
-            // 3. Persist domain user
+            // 3. Add initial claims (UserType, IsActive)
+            await _identityUserService.UpdateClaimsAsync(identityUser.Id, new Dictionary<string, string>
+            {
+                { "UserType", user.UserType.ToString() },
+                { "IsActive", user.IsActive.ToString() }
+            });
+
+            // 4. Persist domain user
             _dbContext.Users.Add(user);
             // SaveChangesAsync is called by IUnitOfWork in handler
         }
 
-        public async Task Update(User user, string? password)
+        public async Task Update(User user, string? currentPassword, string? newPassword)
         {
-            // 1. Update identity user if needed
-            if (!string.IsNullOrEmpty(password) && user.IdentityId != null)
+            // 1. Sync ASP.NET Identity
+            if (user.IdentityId != null)
             {
                 var identityUser = await _identityUserService.FindByIdAsync(user.IdentityId);
                 if (identityUser != null)
                 {
-                    // FIX: ChangePasswordAsync expects currentPassword, newPassword.
-                    // If you don’t know current password, use RemovePassword + AddPassword instead.
-                    await _identityUserService.ChangePasswordAsync(identityUser.Id, password, password);
+                    // Email sync
+                    if (identityUser.Email != user.Email.Value)
+                        await _identityUserService.UpdateEmailAsync(identityUser.Id, user.Email.Value);
+
+                    // Claims sync (UserType, IsActive)
+                    await _identityUserService.UpdateClaimsAsync(identityUser.Id, new Dictionary<string, string>
+                        {
+                            { "UserType", user.UserType.ToString() },
+                            { "IsActive", user.IsActive.ToString() }
+                        });
+
+                    // Password sync
+                    if (!string.IsNullOrEmpty(newPassword))
+                    {
+                        // If we know current password, use ChangePassword
+                        if (!string.IsNullOrEmpty(currentPassword))
+                            await _identityUserService.ChangePasswordAsync(identityUser.Id, currentPassword, newPassword);
+                        else
+                            await _identityUserService.ResetPasswordAsync(identityUser.Id, newPassword);
+                    }
                 }
             }
 
-            // 2. Update domain user
+            // 2. Update domain entity
             _dbContext.Users.Update(user);
         }
-
         public async Task Remove(User user)
         {
             _dbContext.Users.Remove(user);

@@ -13,7 +13,7 @@ namespace StoreSphere.IdentityAccess.Application.Contracts
     {
         // Aggregate persistence
         Task Add(User user , string password);
-        Task Update(User user ,string? password);   
+        Task Update(User user, string? currentPassword, string? newPassword);
         Task Remove(User user);       // Optional: soft delete
 
         // Query methods for application / read layer
